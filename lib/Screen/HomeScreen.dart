@@ -5,6 +5,8 @@ import 'package:patient_data_manager/Components/Cards/PatientCard.dart';
 import '../Components/TopBar/TopBar.dart';
 import '../Res/Theme/themes.dart';
 import './UpdatePatient.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class MyHomePage extends StatefulWidget {
   MyHomePage(
@@ -26,6 +28,26 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  List<dynamic> dataList = [];
+
+  @override
+  void initState() {
+    super.initState();
+    fetchData();
+  }
+
+  Future<void> fetchData() async {
+    final response =
+        await http.get(Uri.parse('http://192.168.0.19:3009/patients'));
+    if (response.statusCode == 200) {
+      setState(() {
+        dataList = json.decode(response.body);
+      });
+    } else {
+      throw Exception('Failed to fetch data');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -68,13 +90,13 @@ class _MyHomePageState extends State<MyHomePage> {
       )),
       body: Center(
         child: ListView.builder(
-          itemCount: widget.data.length,
+          itemCount: dataList.length,
           itemBuilder: (BuildContext context, int index) {
-            final item = widget.data[index];
+            final item = dataList[index];
             return PatientCard(
               age: 'Age: ${item['age']}',
               gender: 'Gender: ${item['gender']}',
-              name: 'Name: ${item['name']}',
+              name: 'Name: ${item['firstName']} ${item['lastName']}',
             );
           },
         ),
