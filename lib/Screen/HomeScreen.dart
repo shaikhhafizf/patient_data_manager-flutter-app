@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:patient_data_manager/Components/Patients/PatientCard.dart';
+import 'package:patient_data_manager/Components/Cards/PatientCard.dart';
 import '../Components/TopBar/TopBar.dart';
 import '../Res/Theme/themes.dart';
 import './UpdatePatient.dart';

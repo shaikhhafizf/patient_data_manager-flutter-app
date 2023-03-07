@@ -1,6 +1,8 @@
+
 import 'package:flutter/material.dart';
 import 'package:patient_data_manager/Res/Theme/themes.dart';
 import 'package:patient_data_manager/Screen/ManagePatient.dart';
+import 'package:patient_data_manager/Screen/UpdatePatient.dart';
 
 class PatientCard extends StatelessWidget {
   const PatientCard(
@@ -62,6 +64,10 @@ class PatientCard extends StatelessWidget {
                   TextButton(
                     onPressed: () {
                       //handle update button press
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const UpdatePatient()));
                     },
                     child: const Text('Update'),
                   ),

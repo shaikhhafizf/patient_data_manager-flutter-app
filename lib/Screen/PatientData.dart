@@ -1,80 +1,60 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:patient_data_manager/Components/Patients/PatientCard.dart';
-import '../Components/TopBar/TopBar.dart';
+import 'package:patient_data_manager/Components/Cards/PatientDataCard.dart';
+import 'package:patient_data_manager/Components/TopBar/TopBarWithoutSearchBar.dart';
+import 'package:patient_data_manager/Screen/UpdatePatienData.dart';
 import '../Res/Theme/themes.dart';
 import './UpdatePatient.dart';
 
-class MyHomePage extends StatefulWidget {
-  MyHomePage(
-      {super.key,
-      required this.title,
-      required this.onMenuPressed,
-      required this.onSearchPressed});
+class PatientData extends StatefulWidget {
+  PatientData({
+    super.key,
+    required this.title,
+  });
   final String title;
-  final VoidCallback onMenuPressed;
-  final VoidCallback onSearchPressed;
 
   final List<Map<String, dynamic>> data = [
-    {'name': 'John Doe', 'gender': 'Male', 'age': 30},
-    {'name': 'Jane Doe', 'gender': 'Female', 'age': 25},
-    {'name': 'Bob Smith', 'gender': 'Male', 'age': 45},
+    {
+      'dataName': 'Blood pressure',
+      'description': 'Systolic / Diastolic',
+      'time': 'Today, 10:30 AM',
+      'value': '120 / 80',
+    },
+    {
+      'dataName': 'Heart rate',
+      'description': 'Resting heart rate',
+      'time': 'Yesterday, 8:45 PM',
+      'value': '72 bpm',
+    },
+    {
+      'dataName': 'Temperature',
+      'description': 'Oral',
+      'time': '2 days ago, 3:15 PM',
+      'value': '98.6 °F',
+    },
   ];
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<PatientData> createState() => _PatientDataState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _PatientDataState extends State<PatientData> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: TopBar(
+      appBar: TopBarWithoutSearchBar(
         title: widget.title,
-        onSearchPressed: widget.onSearchPressed,
       ),
-      drawer: Drawer(
-          child: ListView(
-        padding: EdgeInsets.zero,
-        children: [
-          DrawerHeader(
-            decoration: const BoxDecoration(
-              color: Themes.primaryColor,
-            ),
-            child: Text(
-              'Hello,',
-              style: TextStyle(
-                color: Theme.of(context)
-                    .colorScheme
-                    .onPrimary, // set the text color
-                fontSize: 32.0, // set the font size
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-          ListTile(
-            title: const Text('All Patients'),
-            onTap: () {
-              // Handle item 1 press
-            },
-          ),
-          ListTile(
-            title: const Text('About Us'),
-            onTap: () {
-              // Handle item 2 press
-            },
-          ),
-        ],
-      )),
       body: Center(
         child: ListView.builder(
           itemCount: widget.data.length,
           itemBuilder: (BuildContext context, int index) {
             final item = widget.data[index];
-            return PatientCard(
-              age: 'Age: ${item['age']}',
-              gender: 'Gender: ${item['gender']}',
-              name: 'Name: ${item['name']}',
+            return PatientDataCard(
+              dataName: item['dataName'],
+              description: item['description'],
+              time: item['time'],
+              value: item['value'],
             );
           },
         ),
@@ -82,7 +62,7 @@ class _MyHomePageState extends State<MyHomePage> {
       floatingActionButton: FloatingActionButton(
         onPressed: () => {
           Navigator.push(context,
-              MaterialPageRoute(builder: (context) => const UpdatePatient()))
+              MaterialPageRoute(builder: (context) => const UpdatePatienData()))
         },
         tooltip: 'Increment',
         child: const Icon(Icons.add),
