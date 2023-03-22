@@ -1,21 +1,56 @@
-
 import 'package:flutter/material.dart';
 import 'package:patient_data_manager/Res/Theme/themes.dart';
 import 'package:patient_data_manager/Screen/ManagePatient.dart';
 import 'package:patient_data_manager/Screen/UpdatePatient.dart';
 
 class PatientCard extends StatelessWidget {
-  const PatientCard(
-      {super.key, required this.name, required this.age, required this.gender});
   final String name;
   final String age;
   final String gender;
+  final String patientId;
+
+  final String firstName;
+
+  final String lastName;
+
+  final String address;
+
+  final String phone;
+
+  final String email;
+
+  final String dob;
+  const PatientCard({
+    super.key,
+    required this.name,
+    required this.age,
+    required this.gender,
+    required this.patientId,
+    required this.firstName,
+    required this.lastName,
+    required this.address,
+    required this.phone,
+    required this.email,
+    required this.dob,
+  });
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => {
-        Navigator.push(context,
-            MaterialPageRoute(builder: (context) => const ManagePatient()))
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => ManagePatient(
+                      address: address,
+                      dob: dob,
+                      email: email,
+                      age: age,
+                      gender: gender,
+                      firstName: firstName,
+                      lastName: lastName,
+                      patientId: patientId,
+                      phone: phone,
+                    )))
       },
       child: Card(
         margin: const EdgeInsets.all(8.0),
@@ -43,14 +78,14 @@ class PatientCard extends StatelessWidget {
                       Row(
                         children: [
                           Text(
-                            gender,
+                            'Gender: $gender',
                             style: TextStyle(
                               color: Colors.grey[600],
                             ),
                           ),
                           const SizedBox(width: 16.0),
                           Text(
-                            age,
+                            'Age: $age',
                             style: TextStyle(
                               color: Colors.grey[600],
                             ),
@@ -64,10 +99,21 @@ class PatientCard extends StatelessWidget {
                   TextButton(
                     onPressed: () {
                       //handle update button press
+                      debugPrint(dob);
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const UpdatePatient()));
+                              builder: (context) => UpdatePatient(
+                                    address: address,
+                                    dob: dob,
+                                    email: email,
+                                    age: age,
+                                    gender: gender,
+                                    firstName: firstName,
+                                    lastName: lastName,
+                                    patientId: patientId,
+                                    phone: phone,
+                                  )));
                     },
                     child: const Text('Update'),
                   ),

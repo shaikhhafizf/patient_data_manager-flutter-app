@@ -6,9 +6,39 @@ import 'package:patient_data_manager/Components/FormFields/CustomDropDownField.d
 
 import 'package:patient_data_manager/Components/FormFields/CustomTextField.dart';
 import 'package:patient_data_manager/Components/TopBar/TopBarWithoutSearchBar.dart';
+import 'package:http/http.dart' as http;
+import 'package:patient_data_manager/Services/APIs.dart';
 
 class UpdatePatient extends StatefulWidget {
-  const UpdatePatient({super.key});
+  final String patientId;
+
+  final String firstName;
+
+  final String lastName;
+
+  final String address;
+
+  final String phone;
+
+  final String gender;
+
+  final String email;
+
+  final String dob;
+
+  final String age;
+
+  const UpdatePatient(
+      {super.key,
+      this.patientId = '',
+      this.firstName = '',
+      this.lastName = '',
+      this.age = '',
+      this.gender = 'Male',
+      this.dob = '2000-01-01',
+      this.email = '',
+      this.phone = '',
+      this.address = ''});
 
   @override
   State<UpdatePatient> createState() => _UpdatePatientState();
@@ -19,18 +49,78 @@ class _UpdatePatientState extends State<UpdatePatient> {
   final _firstNameController = TextEditingController();
   final _lastNameController = TextEditingController();
   final _ageController = TextEditingController();
-  final _genderController = TextEditingController();
+  // final _genderController = TextEditingController();
   String _gender = 'Male';
-  DateTime _dob = DateTime.now();
-  final _dobController = TextEditingController();
+  DateTime _dob = DateTime(2000, 1, 1);
+  // final _dobController = TextEditingController();
   final _emailController = TextEditingController();
   final _phoneController = TextEditingController();
   final _addressController = TextEditingController();
 
   @override
+  void initState() {
+    super.initState();
+    _firstNameController.text = widget.firstName;
+    _lastNameController.text = widget.lastName;
+    _ageController.text = widget.age;
+    _gender = widget.gender;
+    _dob = DateTime.parse(widget.dob);
+    _emailController.text = widget.email;
+    _addressController.text = widget.address;
+  }
+
+  submitData() async {
+    if (_formKey.currentState!.validate()) {
+      final data = {
+        'firstName': _firstNameController.text,
+        'lastName': _lastNameController.text,
+        'age': int.parse(_ageController.text),
+        'gender': _gender,
+        'dob': DateFormat('yyyy-MM-dd').format(_dob),
+        'email': _emailController.text,
+        'phoneNumber': _phoneController.text,
+        'Address': _addressController.text,
+        'patientId': widget.patientId == '' ? null : widget.patientId
+      };
+      var res =
+          await PatientsDataServer().updatePatientData(data).catchError((e) {
+        debugPrint('e');
+      });
+      if (res == null) return;
+      Navigator.pop(context);
+
+      // ignore: use_build_context_synchronously
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text(
+              'Success',
+              style: TextStyle(color: Colors.black),
+            ),
+            content: const Text(
+              'The patient added.',
+              style: TextStyle(color: Colors.black),
+            ),
+            actions: <Widget>[
+              TextButton(
+                child: const Text('OK'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const TopBarWithoutSearchBar(title: "Add or Update Patient"),
+      appBar: TopBarWithoutSearchBar(
+          title: "${widget.patientId == '' ? "Add" : "Update"} Patient"),
       body: SingleChildScrollView(
         child: Form(
           key: _formKey,
@@ -73,17 +163,18 @@ class _UpdatePatientState extends State<UpdatePatient> {
                 CustomDropDownField(
                   label: 'Gender',
                   onChanged: (value) {
-                    // Do something with the selected value
+                    _gender = value!;
                   },
-                  value: 'Male',
+                  value: _gender,
                   items: const ['Male', 'Female'],
                 ),
                 CustomDateField(
                   label: 'Date of Birth',
                   onChanged: (date) {
                     // Do something with the selected date
+                    _dob = date!;
                   },
-                  initialDate: DateTime(2000, 1, 1),
+                  initialDate: _dob,
                   firstDate: DateTime(1900),
                   lastDate: DateTime.now(),
                 ),
@@ -125,11 +216,7 @@ class _UpdatePatientState extends State<UpdatePatient> {
                 ),
                 const SizedBox(height: 16),
                 FormButton(
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      // Perform some action here
-                    }
-                  },
+                  onPressed: submitData,
                   label: 'Submit',
                 ),
               ],

@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 class TopBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
   final VoidCallback onSearchPressed;
+  final VoidCallback onRefresh;
 
   const TopBar({
     Key? key,
     required this.title,
     required this.onSearchPressed,
+    required this.onRefresh,
   }) : super(key: key);
 
   @override
@@ -18,6 +20,10 @@ class TopBar extends StatelessWidget implements PreferredSizeWidget {
         IconButton(
           icon: const Icon(Icons.search),
           onPressed: onSearchPressed,
+        ),
+        IconButton(
+          icon: const Icon(Icons.refresh),
+          onPressed: onRefresh,
         ),
       ],
     );

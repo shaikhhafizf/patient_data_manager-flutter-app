@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:patient_data_manager/Components/Cards/PatientCard.dart';
+import 'package:patient_data_manager/Services/APIs.dart';
 import '../Components/TopBar/TopBar.dart';
 import '../Res/Theme/themes.dart';
 import './UpdatePatient.dart';
@@ -18,11 +19,7 @@ class MyHomePage extends StatefulWidget {
   final VoidCallback onMenuPressed;
   final VoidCallback onSearchPressed;
 
-  final List<Map<String, dynamic>> data = [
-    {'name': 'John Doe', 'gender': 'Male', 'age': 30},
-    {'name': 'Jane Doe', 'gender': 'Female', 'age': 25},
-    {'name': 'Bob Smith', 'gender': 'Male', 'age': 45},
-  ];
+  final List<Map<String, dynamic>> dataList = [];
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
@@ -37,15 +34,14 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<void> fetchData() async {
-    final response =
-        await http.get(Uri.parse('http://192.168.0.19:3009/patients'));
-    if (response.statusCode == 200) {
-      setState(() {
-        dataList = json.decode(response.body);
-      });
-    } else {
-      throw Exception('Failed to fetch data');
-    }
+    var res = await PatientsDataServer().patients().catchError((e) {
+      debugPrint(e);
+    });
+    if (res == null) return;
+
+    setState(() {
+      dataList = json.decode(res);
+    });
   }
 
   @override
@@ -54,6 +50,9 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: TopBar(
         title: widget.title,
         onSearchPressed: widget.onSearchPressed,
+        onRefresh: () {
+          fetchData();
+        },
       ),
       drawer: Drawer(
           child: ListView(
@@ -93,10 +92,20 @@ class _MyHomePageState extends State<MyHomePage> {
           itemCount: dataList.length,
           itemBuilder: (BuildContext context, int index) {
             final item = dataList[index];
+            final date = item['dob'].toString().split('-');
+            debugPrint(item['dob'].toString());
             return PatientCard(
-              age: 'Age: ${item['age']}',
-              gender: 'Gender: ${item['gender']}',
+              age: item['age'].toString(),
+              gender: item['gender'],
               name: 'Name: ${item['firstName']} ${item['lastName']}',
+              address: item['Address'],
+              dob: item['dob'].toString(),
+              // '${date[2]}-${num.parse(date[1]) < 10 ? '0${date[1]}' : date[1]}-${num.parse(date[0]) < 10 ? '0${date[0]}' : date[0]}',
+              email: item['email'],
+              firstName: item['firstName'],
+              lastName: item['lastName'],
+              patientId: item['id'],
+              phone: item['phoneNumber'],
             );
           },
         ),

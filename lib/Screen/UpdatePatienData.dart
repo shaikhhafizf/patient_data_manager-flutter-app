@@ -8,7 +8,9 @@ import 'package:patient_data_manager/Components/FormFields/CustomTextField.dart'
 import 'package:patient_data_manager/Components/TopBar/TopBarWithoutSearchBar.dart';
 
 class UpdatePatienData extends StatefulWidget {
-  const UpdatePatienData({super.key});
+  final patientDataId;
+
+  const UpdatePatienData({super.key, this.patientDataId});
 
   @override
   State<UpdatePatienData> createState() => _UpdatePatienDataState();
@@ -24,7 +26,8 @@ class _UpdatePatienDataState extends State<UpdatePatienData> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const TopBarWithoutSearchBar(title: "Add or Update Patient"),
+      appBar: TopBarWithoutSearchBar(
+          title: "${widget.patientDataId == null ? 'Add' : 'Update'} Patient"),
       body: SingleChildScrollView(
         child: Form(
           key: _formKey,

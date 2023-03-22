@@ -10,9 +10,38 @@ import 'package:patient_data_manager/Components/TopBar/TopBarWithoutSearchBar.da
 import 'package:patient_data_manager/Res/Theme/themes.dart';
 import 'package:patient_data_manager/Screen/PatientData.dart';
 import 'package:patient_data_manager/Screen/UpdatePatient.dart';
+import 'package:patient_data_manager/Services/APIs.dart';
 
 class ManagePatient extends StatefulWidget {
-  const ManagePatient({super.key});
+  final String patientId;
+
+  final String firstName;
+
+  final String lastName;
+
+  final String address;
+
+  final String phone;
+
+  final String gender;
+
+  final String email;
+
+  final String dob;
+
+  final String age;
+
+  const ManagePatient(
+      {super.key,
+      this.patientId = '',
+      this.firstName = '',
+      this.lastName = '',
+      this.age = '',
+      this.gender = 'Male',
+      this.dob = '2000-01-01',
+      this.email = '',
+      this.phone = '',
+      this.address = ''});
 
   @override
   State<ManagePatient> createState() => _ManagePatientState();
@@ -34,10 +63,86 @@ class _ManagePatientState extends State<ManagePatient> {
                           title: 'Patient Data',
                         )));
           } else if (value == 'Update') {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => const UpdatePatient()));
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => UpdatePatient(
+                          address: widget.address,
+                          dob: widget.dob,
+                          email: widget.email,
+                          age: widget.age,
+                          gender: widget.gender,
+                          firstName: widget.firstName,
+                          lastName: widget.lastName,
+                          patientId: widget.patientId,
+                          phone: widget.phone,
+                        )));
           } else if (value == 'Delete') {
             debugPrint('delete');
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: const Text(
+                    'Delete item?',
+                    style: TextStyle(color: Colors.black),
+                  ),
+                  content: const Text(
+                    'Are you sure you want to delete this item?',
+                    style: TextStyle(color: Colors.black),
+                  ),
+                  actions: <Widget>[
+                    TextButton(
+                      child: const Text('Cancel'),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                    TextButton(
+                      child: const Text('Delete'),
+                      onPressed: () async {
+                        // Perform delete operation
+
+                        var res = await PatientsDataServer()
+                            .deletePatients(widget.patientId)
+                            .catchError((e) {
+                          debugPrint(e);
+                        });
+                        if (res == null) return;
+
+                        Navigator.of(context).pop();
+                        Navigator.pop(context);
+                        // Show success dialog
+                        // ignore: use_build_context_synchronously
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: const Text(
+                                'Success',
+                                style: TextStyle(color: Colors.black),
+                              ),
+                              content: const Text(
+                                'The patient has been deleted.',
+                                style: TextStyle(color: Colors.black),
+                              ),
+                              actions: <Widget>[
+                                TextButton(
+                                  child: const Text('OK'),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      },
+                    ),
+                  ],
+                );
+              },
+            );
           }
         },
       ),
@@ -79,13 +184,13 @@ class _ManagePatientState extends State<ManagePatient> {
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
-                      Label(text: "FirstName LastName"),
-                      Label(text: "34"),
-                      Label(text: "Male"),
-                      Label(text: "FirtsName@gmail.com"),
-                      Label(text: "+1 647 566 1123"),
-                      Label(text: "215 eglinton, Scarborogh, M1J5C7"),
+                    children: [
+                      Label(text: '${widget.firstName} ${widget.lastName}'),
+                      Label(text: widget.age),
+                      Label(text: widget.gender),
+                      Label(text: widget.email),
+                      Label(text: widget.phone),
+                      Label(text: widget.address),
                     ],
                   ),
                 ),
