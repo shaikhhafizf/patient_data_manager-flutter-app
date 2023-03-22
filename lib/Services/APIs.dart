@@ -28,9 +28,13 @@ class PatientsDataServer {
     // debugPrint(payload['patientId'].toString());x
     var _payload = json.encode(payload);
     debugPrint(_payload.toString());
+    debugPrint(url.toString());
 
-    var response = await client.post(url,
-        headers: {"content-type": "application/json"}, body: _payload);
+    var response = payload['patientId'] == null
+        ? await client.post(url,
+            headers: {"content-type": "application/json"}, body: _payload)
+        : await client.patch(url,
+            headers: {"content-type": "application/json"}, body: _payload);
     debugPrint(' working');
     if (response.statusCode == 200) {
       debugPrint(' working');

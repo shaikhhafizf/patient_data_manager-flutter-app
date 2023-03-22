@@ -67,6 +67,7 @@ class _UpdatePatientState extends State<UpdatePatient> {
     _dob = DateTime.parse(widget.dob);
     _emailController.text = widget.email;
     _addressController.text = widget.address;
+    _phoneController.text = widget.phone;
   }
 
   submitData() async {
@@ -98,9 +99,11 @@ class _UpdatePatientState extends State<UpdatePatient> {
               'Success',
               style: TextStyle(color: Colors.black),
             ),
-            content: const Text(
-              'The patient added.',
-              style: TextStyle(color: Colors.black),
+            content: Text(
+              widget.patientId == ''
+                  ? 'The patient added.'
+                  : 'The patient profile updated.',
+              style: const TextStyle(color: Colors.black),
             ),
             actions: <Widget>[
               TextButton(
