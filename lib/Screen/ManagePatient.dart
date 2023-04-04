@@ -8,7 +8,7 @@ import 'package:patient_data_manager/Components/FormFields/CustomTextField.dart'
 import 'package:patient_data_manager/Components/Text/Label.dart';
 import 'package:patient_data_manager/Components/TopBar/TopBarWithoutSearchBar.dart';
 import 'package:patient_data_manager/Res/Theme/themes.dart';
-import 'package:patient_data_manager/Screen/PatientData.dart';
+import 'package:patient_data_manager/Screen/PatientRecords.dart';
 import 'package:patient_data_manager/Screen/UpdatePatient.dart';
 import 'package:patient_data_manager/Services/APIs.dart';
 
@@ -59,9 +59,9 @@ class _ManagePatientState extends State<ManagePatient> {
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => PatientData(
-                          title: 'Patient Data',
-                        )));
+                    builder: (context) => PatientRecords(
+                        title: 'Patient Records',
+                        patientId: widget.patientId)));
           } else if (value == 'Update') {
             Navigator.push(
                 context,
